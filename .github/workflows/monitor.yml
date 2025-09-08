@@ -25,4 +25,4 @@ jobs:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           TO_EMAIL: ${{ secrets.EMAIL_ADDRESS }}
-        run: python ielts_monitor.py
+        run: python ietls_monitor.py
