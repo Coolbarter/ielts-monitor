@@ -1,6 +1,7 @@
 name: IELTS Monitor
 
 on:
+  push:                     # run on every push
   schedule:
     - cron: "*/10 * * * *"   # runs every 10 minutes
   workflow_dispatch:         # allows manual run from Actions tab
