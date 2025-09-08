@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests
 from bs4 import BeautifulSoup
+import time
 
 # --- Configuration ---
 NOVEMBER_URL = "https://irsafam.org/ielts/timetable?month%5B%5D=11"
@@ -71,25 +72,16 @@ def save_status(status):
 
 
 if __name__ == "__main__":
-    html_content = get_page_content(NOVEMBER_URL)
-    last_status = get_last_status()
-
-    if html_content:
-        is_available = check_november_availability(html_content)
-        if is_available and last_status != "AVAILABLE":
-            send_notification_email(
-                "✅ IELTS November Dates ARE Available!",
-                f"Good news! IELTS November dates appear to be available.\n\nCheck here: {NOVEMBER_URL}"
-            )
-            save_status("AVAILABLE")
-        elif not is_available and last_status == "AVAILABLE":
-            send_notification_email(
-                "⚠️ IELTS November Dates Disappeared",
-                f"IELTS November dates were previously available but now seem gone.\n\nCheck here: {NOVEMBER_URL}"
-            )
-            save_status("NOT_AVAILABLE")
-        else:
-            save_status("AVAILABLE" if is_available else "NOT_AVAILABLE")
-            print("No change in status.")
-    else:
-        print("⚠️ Could not fetch page content.")
+    print("🚀 Starting test email...")
+    
+    try:
+        send_notification_email(
+            "🧪 IELTS Monitor Test Email",
+            "This is a test email from your IELTS monitoring script.\n\n" +
+            "If you received this email, your GitHub Actions workflow and email configuration are working correctly!\n\n" +
+            "Time sent: " + time.strftime("%Y-%m-%d %H:%M:%S") + "\n\n" +
+            "Your monitoring system is ready to track IELTS dates! 🎯"
+        )
+        print("✅ Test email sent successfully!")
+    except Exception as e:
+        print(f"❌ Error sending test email: {e}")
