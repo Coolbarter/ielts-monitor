@@ -72,16 +72,35 @@ def save_status(status):
 
 
 if __name__ == "__main__":
-    print("🚀 Starting test email...")
-    
-    try:
-        send_notification_email(
-            "🧪 IELTS Monitor Test Email",
-            "This is a test email from your IELTS monitoring script.\n\n" +
-            "If you received this email, your GitHub Actions workflow and email configuration are working correctly!\n\n" +
-            "Time sent: " + time.strftime("%Y-%m-%d %H:%M:%S") + "\n\n" +
-            "Your monitoring system is ready to track IELTS dates! 🎯"
-        )
-        print("✅ Test email sent successfully!")
-    except Exception as e:
-        print(f"❌ Error sending test email: {e}")
+    print("🚀 Starting IELTS date monitoring...")
+    html_content = get_page_content(NOVEMBER_URL)
+    last_status = get_last_status()
+
+    if html_content:
+        is_available = check_november_availability(html_content)
+        print(f"✨ Current availability status: {'Available' if is_available else 'Not Available'}")
+        
+        if is_available and last_status != "AVAILABLE":
+            send_notification_email(
+                "🎉 IELTS November Dates ARE Available!",
+                f"Good news! IELTS November dates appear to be available.\n\n"
+                f"Check here: {NOVEMBER_URL}\n\n"
+                f"Time detected: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                "Good luck! 🍀"
+            )
+            save_status("AVAILABLE")
+            print("📧 Notification email sent for newly available dates!")
+        elif not is_available and last_status == "AVAILABLE":
+            send_notification_email(
+                "⚠️ IELTS November Dates No Longer Available",
+                f"IELTS November dates were previously available but now seem to be gone.\n\n"
+                f"Check here: {NOVEMBER_URL}\n\n"
+                f"Time detected: {time.strftime('%Y-%m-%d %H:%M:%S')}"
+            )
+            save_status("NOT_AVAILABLE")
+            print("📧 Notification email sent for dates becoming unavailable.")
+        else:
+            save_status("AVAILABLE" if is_available else "NOT_AVAILABLE")
+            print("ℹ️ No status change detected.")
+    else:
+        print("❌ Could not fetch page content. Will retry on next check.")
